@@ -21,10 +21,21 @@
       <div id="module-container"></div>
     </div>
 
-    <script src="renderer.js"></script>
-    <script src="vertrieb.js"></script>
-    <script src="kontakte.js"></script>
-    <script src="artikel.js"></script>
-    <script src="database.js"></script>
+    <script type="module">
+      import { initDB } from "./db.js";
+
+      window.initDatabase = async () => {
+        window.db = await initDB();
+        console.log("Datenbank initialisiert!");
+
+        // Module laden
+        import("./renderer.js");
+        import("./vertrieb.js");
+        import("./kontakte.js");
+        import("./artikel.js");
+      };
+
+      window.initDatabase();
+    </script>
   </body>
 </html>

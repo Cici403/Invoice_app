@@ -6,14 +6,14 @@ function createWindow() {
     width: 1200,
     height: 800,
     webPreferences: {
-      nodeIntegration: true, // This must be true
-      contextIsolation: false, // This must be false
-      enableRemoteModule: true, // Add this line
+      nodeIntegration: true,
+      contextIsolation: false,
+      webSecurity: false,
     },
   });
 
   mainWindow.loadFile("src/index.html");
-  // mainWindow.webContents.openDevTools() // Uncomment for debugging
+  mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow);

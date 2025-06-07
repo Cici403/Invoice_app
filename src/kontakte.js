@@ -1,4 +1,4 @@
-// HTML für Kontaktmodul
+const db = require("./database");
 window.kontakteModuleHTML = () => `
   <div class="kontakte-module">
     <h2>Kundenverwaltung</h2>

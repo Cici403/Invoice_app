@@ -1,5 +1,15 @@
-// HTML für Vertriebsmodul
-window.vertriebModuleHTML = () => `
+export default function initVertrieb() {
+  console.log("Vertrieb-Modul geladen");
+
+  // Beispiel-Datenbankabfrage
+  const kunden = window.db.exec("SELECT * FROM kunden");
+  console.log("Kunden:", kunden);
+}
+
+// Automatisch ausführen wenn importiert
+initVertrieb();
+
+window.loadModule = (moduleName) => `
   <div class="vertrieb-module">
     <h2>Rechnung erstellen</h2>
     

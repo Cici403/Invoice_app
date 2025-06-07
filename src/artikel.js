@@ -1,4 +1,5 @@
-// HTML für Artikelmodul
+const db = require("./database");
+
 window.artikelModuleHTML = () => `
   <div class="artikel-module">
     <h2>Artikelverwaltung</h2>
