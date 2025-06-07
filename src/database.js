@@ -1,7 +1,8 @@
+// Use module.exports instead of redeclaring db
 const Database = require("better-sqlite3");
-const db = new Database("datenbank.db");
+const dbInstance = new Database("datenbank.db");
 
-db.exec(`
+dbInstance.exec(`
   CREATE TABLE IF NOT EXISTS kunden (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -10,7 +11,8 @@ db.exec(`
     telefon TEXT
   );
   
-  CREATE TABLE IF NOT EXISTS artikel (
+  // ... rest of your table creation code ...
+    CREATE TABLE IF NOT EXISTS artikel (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     bezeichnung TEXT NOT NULL,
     preis_netto REAL NOT NULL,
@@ -36,4 +38,4 @@ db.exec(`
   );
 `);
 
-module.exports = db;
+module.exports = dbInstance; // Export the instance
