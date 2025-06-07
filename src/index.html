@@ -2,11 +2,27 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Rechnungsprogramm</title>
+    <title>Warenwirtschaftssystem</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Neues Rechnungsprogramm</h1>
-    <p>Alles frisch aufgesetzt!</p>
+    <div class="app-container">
+      <header>
+        <h1>Warenwirtschaftssystem</h1>
+      </header>
+
+      <main class="main-menu">
+        <button onclick="loadModule('vertrieb')">Vertrieb</button>
+        <button onclick="loadModule('kontakte')">Kontakte</button>
+        <button onclick="loadModule('artikel')">Artikel</button>
+      </main>
+
+      <div id="module-container"></div>
+    </div>
+
+    <script src="renderer.js"></script>
+    <script src="vertrieb.js"></script>
+    <script src="kontakte.js"></script>
+    <script src="artikel.js"></script>
   </body>
 </html>
