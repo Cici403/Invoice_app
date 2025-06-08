@@ -1,7 +1,5 @@
-const db = require("./database");
-
-// Modul-Lader
-window.loadModule = (moduleName) => {
+// renderer.js - Hauptlogik für Modulladung
+window.loadModule = function (moduleName) {
   const container = document.getElementById("module-container");
 
   switch (moduleName) {

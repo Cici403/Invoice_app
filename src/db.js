@@ -1,22 +1,20 @@
-import initSQLJs from "sql.js";
-import * as Buffer from "buffer";
-import * as process from "process";
-
-window.Buffer = Buffer.Buffer;
-window.process = process;
-
+// src/db.js
 let db;
+let dbInitialized = false;
+const dbReadyCallbacks = [];
 
-export const initDB = async () => {
+window.initDatabase = async function () {
+  if (dbInitialized) return true;
+
   try {
-    const SQL = await initSQLJs({
-      locateFile: (file) => `https://sql.js.org/dist/${file}`,
-    });
+    console.log("Starte Datenbankinitialisierung...");
+    const sqlite3 = await import("@sqlite.org/sqlite-wasm");
+    console.log("SQLite-WASM geladen");
 
-    db = new SQL.Database();
+    db = new sqlite3.oo1.DB("datenbank.db", "ct");
+    console.log("Datenbankdatei geöffnet");
 
-    // Tabellen erstellen
-    db.run(`
+    db.exec(`
       CREATE TABLE IF NOT EXISTS kunden (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -51,18 +49,35 @@ export const initDB = async () => {
       );
     `);
 
-    return db;
+    dbInitialized = true;
+    console.log("Datenbank vollständig initialisiert");
+
+    // Alle wartenden Callbacks aufrufen
+    dbReadyCallbacks.forEach((callback) => callback());
+    dbReadyCallbacks.length = 0;
+
+    return true;
   } catch (err) {
-    console.error("Datenbankinitialisierungsfehler:", err);
-    throw err;
+    console.error("Fehler bei der Datenbankinitialisierung:", err);
+    return false;
   }
 };
 
-export const queryDB = (sql, params = []) => {
-  return db.exec(sql, params);
+window.db = {
+  query: (sql, params = []) => {
+    if (!dbInitialized) throw new Error("Datenbank nicht initialisiert");
+    return db.exec(sql, params);
+  },
+  run: (sql, params = []) => {
+    if (!dbInitialized) throw new Error("Datenbank nicht initialisiert");
+    db.run(sql, params);
+    return db.exec("SELECT last_insert_rowid() AS id")[0].values[0][0];
+  },
+  ready: (callback) => {
+    if (dbInitialized) callback();
+    else dbReadyCallbacks.push(callback);
+  },
 };
 
-export const runDB = (sql, params = []) => {
-  db.run(sql, params);
-  return db.exec("SELECT last_insert_rowid() AS id")[0].values[0][0];
-};
+// Initialisierung starten
+window.initDatabase();

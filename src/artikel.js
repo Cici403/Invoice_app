@@ -1,5 +1,4 @@
-const db = require("./database");
-
+// src/artikel.js
 window.artikelModuleHTML = () => `
   <div class="artikel-module">
     <h2>Artikelverwaltung</h2>
@@ -27,46 +26,65 @@ window.artikelModuleHTML = () => `
   </div>
 `;
 
-// Artikelmodul initialisieren
 window.initArtikelModule = () => {
-  updateArtikelTabelle();
+  // Sicherstellen, dass DB bereit ist
+  window.db.ready(() => {
+    updateArtikelTabelle();
+  });
 };
 
-// Artikel speichern
 window.saveArtikel = () => {
-  const bezeichnung = document.getElementById("artikel-bezeichnung").value;
-  const preis = parseFloat(document.getElementById("artikel-preis").value);
-  const mwst = parseFloat(document.getElementById("artikel-mwst").value) || 19;
+  // Sicherstellen, dass DB bereit ist
+  window.db.ready(() => {
+    const bezeichnung = document.getElementById("artikel-bezeichnung").value;
+    const preis = parseFloat(document.getElementById("artikel-preis").value);
+    const mwst = parseFloat(document.getElementById("artikel-mwst").value) || 19;
 
-  const stmt = db.prepare(`
-    INSERT INTO artikel (bezeichnung, preis_netto, mwst)
-    VALUES (?, ?, ?)
-  `);
+    if (!bezeichnung || isNaN(preis)) {
+      alert("Bitte alle Pflichtfelder ausfüllen!");
+      return;
+    }
 
-  stmt.run(bezeichnung, preis, mwst);
-  alert("Artikel gespeichert!");
-  updateArtikelTabelle();
+    try {
+      const id = window.db.run("INSERT INTO artikel (bezeichnung, preis_netto, mwst) VALUES (?, ?, ?)", [bezeichnung, preis, mwst]);
+      console.log("Artikel gespeichert mit ID:", id);
 
-  // Formular leeren
-  document.getElementById("artikel-bezeichnung").value = "";
-  document.getElementById("artikel-preis").value = "";
-  document.getElementById("artikel-mwst").value = "19";
+      updateArtikelTabelle();
+
+      // Formular leeren
+      document.getElementById("artikel-bezeichnung").value = "";
+      document.getElementById("artikel-preis").value = "";
+      document.getElementById("artikel-mwst").value = "19";
+    } catch (err) {
+      console.error("Fehler beim Speichern:", err);
+      alert("Fehler beim Speichern des Artikels!");
+    }
+  });
 };
 
-// Hilfsfunktion: Artikeltabelle aktualisieren
 function updateArtikelTabelle() {
-  const artikel = db.prepare("SELECT * FROM artikel").all();
-  const body = document.getElementById("artikel-body");
+  try {
+    const result = window.db.query("SELECT * FROM artikel");
+    const body = document.getElementById("artikel-body");
 
-  body.innerHTML = artikel
-    .map(
-      (a) => `
-    <tr>
-      <td>${a.bezeichnung}</td>
-      <td>${a.preis_netto.toFixed(2)}€</td>
-      <td>${a.mwst}%</td>
-    </tr>
-  `
-    )
-    .join("");
+    if (!result || result.length === 0 || !result[0].values) {
+      body.innerHTML = '<tr><td colspan="3">Keine Artikel gefunden</td></tr>';
+      return;
+    }
+
+    body.innerHTML = result[0].values
+      .map(
+        (artikel) => `
+      <tr>
+        <td>${artikel[1]}</td>
+        <td>${artikel[2].toFixed(2)}€</td>
+        <td>${artikel[3]}%</td>
+      </tr>
+    `
+      )
+      .join("");
+  } catch (err) {
+    console.error("Fehler beim Laden der Artikel:", err);
+    setTimeout(updateArtikelTabelle, 500); // Erneut versuchen
+  }
 }

@@ -1,4 +1,4 @@
-const db = require("./database");
+// kontakte.js - Kundenmodul
 window.kontakteModuleHTML = () => `
   <div class="kontakte-module">
     <h2>Kundenverwaltung</h2>
@@ -28,24 +28,18 @@ window.kontakteModuleHTML = () => `
   </div>
 `;
 
-// Kontaktmodul initialisieren
 window.initKontakteModule = () => {
   updateKundenTabelle();
 };
 
-// Kunde speichern
 window.saveKunde = () => {
   const name = document.getElementById("kunde-name").value;
   const adresse = document.getElementById("kunde-adresse").value;
   const email = document.getElementById("kunde-email").value;
   const telefon = document.getElementById("kunde-telefon").value;
 
-  const stmt = db.prepare(`
-    INSERT INTO kunden (name, adresse, email, telefon)
-    VALUES (?, ?, ?, ?)
-  `);
+  window.db.run("INSERT INTO kunden (name, adresse, email, telefon) VALUES (?, ?, ?, ?)", [name, adresse, email, telefon]);
 
-  stmt.run(name, adresse, email, telefon);
   alert("Kunde gespeichert!");
   updateKundenTabelle();
 
@@ -56,19 +50,23 @@ window.saveKunde = () => {
   document.getElementById("kunde-telefon").value = "";
 };
 
-// Hilfsfunktion: Kundentabelle aktualisieren
 function updateKundenTabelle() {
-  const kunden = db.prepare("SELECT * FROM kunden").all();
+  const kunden = window.db.query("SELECT * FROM kunden");
   const body = document.getElementById("kunden-body");
 
-  body.innerHTML = kunden
+  if (kunden.length === 0) {
+    body.innerHTML = '<tr><td colspan="4">Keine Kunden gefunden</td></tr>';
+    return;
+  }
+
+  body.innerHTML = kunden[0].values
     .map(
       (k) => `
     <tr>
-      <td>${k.name}</td>
-      <td>${k.adresse || "-"}</td>
-      <td>${k.email || "-"}</td>
-      <td>${k.telefon || "-"}</td>
+      <td>${k[1]}</td>
+      <td>${k[2] || "-"}</td>
+      <td>${k[3] || "-"}</td>
+      <td>${k[4] || "-"}</td>
     </tr>
   `
     )
