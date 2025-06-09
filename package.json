@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder",
+    "clean": "rimraf dist && rimraf build"
   },
   "dependencies": {
-    "@sqlite.org/sqlite-wasm": "^1.8.2",
-    "sql.js": "^1.8.0"
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "electron": "^28.0.0"
+    "electron": "^28.0.0",
+    "electron-builder": "^24.6.0",
+    "rimraf": "^5.0.0"
   }
 }

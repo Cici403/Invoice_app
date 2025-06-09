@@ -1,0 +1,21 @@
+<h2>Artikelverwaltung</h2>
+
+<div class="form-section">
+  <h3>Neuer Artikel</h3>
+  <input type="text" id="artikel-bezeichnung" placeholder="Bezeichnung" required />
+  <input type="number" id="artikel-preis" placeholder="Preis pro Stück (€)" step="0.01" min="0" required />
+  <button onclick="saveArtikel()">Artikel speichern</button>
+</div>
+
+<div class="artikel-table">
+  <table>
+    <thead>
+      <tr>
+        <th>Bezeichnung</th>
+        <th>Preis (€)</th>
+        <th>Aktionen</th>
+      </tr>
+    </thead>
+    <tbody id="artikel-body"></tbody>
+  </table>
+</div>

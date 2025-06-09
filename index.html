@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+
+    <!-- 🔥 Optimierte CSP: Erlaubt Bilder, Inline-Skripte & Styles -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+      default-src 'self'; 
+      img-src 'self' data:; 
+      script-src 'self' 'unsafe-inline'; 
+      style-src 'self' 'unsafe-inline' 
+    "
+    />
+
+    <title>Warenwirtschaftssystem</title>
+    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="icon" href="data:," />
+
+    <!-- 🔥 Korrigierte Skript-Pfade -->
+    <script src="scripts/renderer.js"></script>
+    <script src="scripts/artikel.js"></script>
+
+    <!-- 🔥 WICHTIG: renderer.js laden -->
+  </head>
+  <body onload="init()">
+    <div
+      id="loading-screen"
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 24px;
+      "
+    >
+      ⏳ Lade Anwendung...
+    </div>
+
+    <div class="app-container">
+      <header>
+        <h1>Warenwirtschaftssystem</h1>
+      </header>
+
+      <main class="main-menu">
+        <button onclick="loadModule('vertrieb')">Vertrieb</button>
+        <button onclick="loadModule('kontakte')">Kontakte</button>
+        <button id="artikel-btn">Artikel anzeigen</button>
+      </main>
+
+      <div id="module-container"></div>
+    </div>
+  </body>
+</html>
